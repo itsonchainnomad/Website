@@ -1,5 +1,6 @@
 // shortcut: placeholder inbox, replace before launch; the contact form opens a mail draft to it.
 export const contactEmail = 'hello@krsi.in'
+export const bookingUrl = 'https://cal.com/sachin-rana-hmkhvs/30min'
 
 export const nav = [
   { label: 'Home', href: '#top' },

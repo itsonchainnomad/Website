@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { motion, useScroll } from 'framer-motion'
-import { contactEmail, footerPages, layers, nav, rail, socials } from '../data/content.ts'
+import { bookingUrl, contactEmail, footerPages, layers, nav, rail, socials } from '../data/content.ts'
 import { Wordmark } from './Art.tsx'
 import { CutButton } from './motion.tsx'
 
@@ -18,31 +18,26 @@ export function useUi() {
 }
 
 export function UiProvider({ children }: { children: ReactNode }) {
-  const [bookOpen, setBookOpen] = useState(false)
   const [videoOpen, setVideoOpen] = useState(false)
 
   useEffect(() => {
-    const open = bookOpen || videoOpen
-    document.body.style.overflow = open ? 'hidden' : ''
+    document.body.style.overflow = videoOpen ? 'hidden' : ''
     return () => {
       document.body.style.overflow = ''
     }
-  }, [bookOpen, videoOpen])
+  }, [videoOpen])
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.key !== 'Escape') return
-      setBookOpen(false)
-      setVideoOpen(false)
+      if (event.key === 'Escape') setVideoOpen(false)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
   return (
-    <UiContext.Provider value={{ openBook: () => setBookOpen(true), openVideo: () => setVideoOpen(true) }}>
+    <UiContext.Provider value={{ openBook: () => window.open(bookingUrl, '_blank', 'noopener'), openVideo: () => setVideoOpen(true) }}>
       {children}
-      {bookOpen && <BookModal onClose={() => setBookOpen(false)} />}
       {videoOpen && <VideoModal onClose={() => setVideoOpen(false)} />}
     </UiContext.Provider>
   )
@@ -237,40 +232,11 @@ function LinkList({ title, links }: { title: string; links: { label: string; hre
   )
 }
 
-function Overlay({ children, onClose, label }: { children: ReactNode; onClose: () => void; label: string }) {
-  return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 p-4" role="presentation" onClick={onClose}>
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-label={label}
-        className="cut max-h-[90vh] w-full max-w-[640px] overflow-auto bg-paper p-6 text-ink"
-        onClick={(event) => event.stopPropagation()}
-      >
-        {children}
-      </div>
-    </div>
-  )
-}
-
 /** Turns the form into a mail draft to the Krsi inbox; nothing is sent until the visitor sends it. */
 export function draftMail(form: HTMLFormElement, subject: string) {
   const data = new FormData(form)
   const body = [...data.entries()].map(([key, value]) => `${key}: ${String(value)}`).join('\n')
   window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-}
-
-function BookModal({ onClose }: { onClose: () => void }) {
-  return (
-    <Overlay onClose={onClose} label="Book a call">
-      <div className="mb-3 flex justify-end">
-        <button type="button" onClick={onClose} className="cursor-pointer font-mono text-[14px]" aria-label="Close">
-          Close
-        </button>
-      </div>
-      <GetInTouchForm title="Book a call" subject="Book a call with Krsi" />
-    </Overlay>
-  )
 }
 
 function FormField({ label, name, type = 'text' }: { label: string; name: string; type?: string }) {
