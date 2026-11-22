@@ -168,8 +168,7 @@ export const socials = [
 ]
 
 export const incubators = [
-  { name: 'NITI Aayog', logo: '/assets/incubators/niti-aayog.png' },
+  { name: 'AIC-CCRI-CED', logo: '/assets/incubators/aic-ccri.png' },
+  { name: 'Coffee Board of India', logo: '/assets/incubators/coffee-board.png' },
   { name: 'Atal Innovation Mission', logo: '/assets/incubators/aim.png' },
-  { name: 'Coffee Board', logo: '/assets/incubators/coffee-board.png' },
-  { name: 'AIC CCRI CED', logo: '/assets/incubators/aic-ccri.png' },
 ]
